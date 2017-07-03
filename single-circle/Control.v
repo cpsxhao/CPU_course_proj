@@ -2,7 +2,7 @@
 module Control(OpCode, Funct,
 	PCSrc, Branch, RegWrite, RegDst, 
 	MemRead, MemWrite, MemtoReg, 
-	ALUSrc1, ALUSrc2, ExtOp, ALUOp);
+	ALUSrc1, ALUSrc2, ExtOp, LuOp, ALUOp);
 	input [5:0] OpCode;
 	input [5:0] Funct;
 	output [1:0] PCSrc;
@@ -15,6 +15,7 @@ module Control(OpCode, Funct,
 	output ALUSrc1;
 	output ALUSrc2;
 	output ExtOp;
+	output LuOp;
 	output [3:0] ALUOp;
 	
 	assign PCSrc[1:0] = 
@@ -49,10 +50,11 @@ module Control(OpCode, Funct,
 		(OpCode == 6'h00 && Funct == 6'h09)? 2'b10: 
 		2'b01;
 
+// I use MemRead to distinguish between 'beq' and 'bne'  >v<
 	assign MemRead = 
 		(OpCode == 6'h2b)? 1'b0: 
 		(OpCode == 6'h04)? 1'b0:
-		(OpCpde == 6'h05)? 1'b0: 
+		(OpCpde == 6'h05)? 1'b1: 
 		(OpCode == 6'h02)? 1'b0:
 		(OpCode == 6'h03)? 1'b0:
 		(OpCode == 6'h00 && Funct == 6'h08)? 1'b0:
@@ -109,5 +111,9 @@ module Control(OpCode, Funct,
 		3'b000;
 		
 	assign ALUOp[3] = OpCode[0];
+
+	assign LuOp = 
+		(OpCode == 6'h0f)? 1'b1:
+		1'b0;
 	
 endmodule
